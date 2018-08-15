@@ -14,11 +14,17 @@ This repository includes the implementation of the method from [our paper](http:
 It contains the following file:
 
 util.py: basic functions used by other scripts.
+
 data_tokenize.py: create the vocabulary and tokenize the data.
+
 flag.py: configuration of the model.
+
 model.py: model construction.
+
 model_attn.py: attntion model with different variations of attention combination strategies.
+
 train.py: train the model.
+
 decode.py: decode the model.
 
 
