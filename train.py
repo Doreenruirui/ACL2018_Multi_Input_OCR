@@ -1,41 +1,20 @@
-# Copyright 2016 Stanford University
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ==============================================================================
-
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
 import math
 import os
-import random
 import sys
 import time
-import random
-import json
 from os.path import join as pjoin
-
 import numpy as np
 from six.moves import xrange
 import tensorflow as tf
-import pickle
-
 import model as ocr_model
 from flag import FLAGS
 from util import pair_iter, read_vocab
-
 import logging
+
 logging.basicConfig(level=logging.INFO)
 
 def create_model(session, vocab_size, forward_only):
