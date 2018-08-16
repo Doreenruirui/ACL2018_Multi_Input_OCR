@@ -1,6 +1,6 @@
 # ACL2018_Multi_Input_OCR
 
-This repository includes the implementation of the method from [our paper](http://www.ccs.neu.edu/home/dongrui/files/paper/acl_2018.pdf). It is implemented via tensorflow 1.9.0. Please use the following citation.
+This repository includes the implementation of the method from [our paper](http://www.ccs.neu.edu/home/dongrui/paper/acl_2018.pdf). It is implemented via tensorflow 1.9.0. Please use the following citation.
 
 @inproceedings{dong2018multi,
   title={Multi-Input Attention for Unsupervised OCR Correction},
