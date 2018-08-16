@@ -90,9 +90,6 @@ def generate_train_noisy(data_dir, out_dir, file_prefix, lm_file, lm_score, flag
     if flag_manual:
         f_z = open(join(out_dir, '%s.z.txt.%d_%d'%(file_prefix, start, end)), 'w')
     pool = Pool(100, initializer=initialize(lm_file))
-    f = open('./score', 'w')
-    n = 0
-    m = 0
     for i in range(len(list_x)):
         witness = [ele.strip() for ele in list_x[i].strip('\n').split('\t') if len(ele.strip()) > 0]
         best_str, best_id, best_prob, probs = rank_sent(pool, witness)
