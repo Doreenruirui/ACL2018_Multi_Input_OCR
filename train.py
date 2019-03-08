@@ -12,7 +12,7 @@ from six.moves import xrange
 import tensorflow as tf
 import model as ocr_model
 from flag import FLAGS
-from util import pair_iter, read_vocab
+from util import pair_iter, read_vocab, print_tokens
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -63,7 +63,7 @@ def train():
     x_dev = pjoin(FLAGS.data_dir, FLAGS.dev + '.ids.x')
     y_dev = pjoin(FLAGS.data_dir, FLAGS.dev + '.ids.y')
     vocab_path = pjoin(FLAGS.voc_dir, "vocab.dat")
-    vocab, _ = read_vocab(vocab_path)
+    vocab, rev_vocab = read_vocab(vocab_path)
     vocab_size = len(vocab)
     logging.info("Vocabulary size: %d" % vocab_size)
     if not os.path.exists(FLAGS.train_dir):
@@ -79,12 +79,11 @@ def train():
 
         # logging.info('Initial validation cost: %f' % validate(model, sess, x_dev, y_dev))
 
-        if False:
-            tic = time.time()
-            params = tf.trainable_variables()
-            num_params = sum(map(lambda t: np.prod(tf.shape(t.value()).eval()), params))
-            toc = time.time()
-            print ("Number of params: %d (retreival took %f secs)" % (num_params, toc - tic))
+        tic = time.time()
+        params = tf.trainable_variables()
+        num_params = sum(map(lambda t: np.prod(tf.shape(t.value()).eval()), params))
+        toc = time.time()
+        print("Number of params: %d (retreival took %f secs)" % (num_params, toc - tic))
 
         best_epoch = 0
         previous_losses = []
@@ -93,7 +92,8 @@ def train():
         exp_norm = None
         total_iters = 0
         start_time = time.time()
-        while (FLAGS.epochs == 0 or epoch < FLAGS.epochs):
+
+        while FLAGS.epochs == 0 or epoch < FLAGS.epochs:
             epoch += 1
             print(epoch)
             current_step = 0

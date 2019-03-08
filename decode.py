@@ -18,8 +18,6 @@ import re
 
 reverse_vocab, vocab, data = None, None, None
 
-def remove_nonascii(text):
-    return re.sub(r'[^\x00-\x7F]', '', text)
 
 def create_model(session, vocab_size, forward_only):
     model = ocr_model.Model(FLAGS.size, vocab_size,
@@ -27,19 +25,19 @@ def create_model(session, vocab_size, forward_only):
                             FLAGS.learning_rate, FLAGS.learning_rate_decay_factor,
                             forward_only=forward_only, decode=FLAGS.decode)
     ckpt = tf.train.get_checkpoint_state(FLAGS.train_dir)
-    if ckpt and tf.gfile.Exists(ckpt.model_checkpoint_path):
-        print("Reading model parameters from %s" % ckpt.model_checkpoint_path)
-        model.saver.restore(session, ckpt.model_checkpoint_path)
-    else:
-        print("Created model with fresh parameters.")
-        session.run(tf.global_variables_initializer())
+    # if ckpt and tf.gfile.Exists(ckpt.model_checkpoint_path):
+    print("Reading model parameters from %s" % ckpt.model_checkpoint_path)
+    model.saver.restore(session, ckpt.model_checkpoint_path)
+    # else:
+    #     print("Created model with fresh parameters.")
+    #     session.run(tf.global_variables_initializer())
     return model
 
 
 def tokenize_multi(sents, vocab):
     token_ids = []
     for sent in sents:
-        token_ids.append(util.sentenc_to_token_ids(sent, vocab, flag_ascii=FLAGS.flag_ascii))
+        token_ids.append(util.sentenc_to_token_ids(sent, vocab))
     token_ids = padded(token_ids)
     source = np.array(token_ids).T
     source_mask = (source != 0).astype(np.int32)
@@ -47,7 +45,7 @@ def tokenize_multi(sents, vocab):
 
 
 def tokenize_single(sent, vocab):
-    token_ids = util.sentenc_to_token_ids(sent, vocab, flag_ascii=FLAGS.flag_ascii)
+    token_ids = util.sentenc_to_token_ids(sent, vocab)
     ones = [1] * len(token_ids)
     source = np.array(token_ids).reshape([-1, 1])
     mask = np.array(ones).reshape([-1, 1])
@@ -104,16 +102,17 @@ def decode():
     f_o = open(pjoin(folder_out, FLAGS.dev + '.avg' + '.o.txt.' + str(FLAGS.start) + '_' + str(FLAGS.end)), 'w')
     f_p = open(pjoin(folder_out, FLAGS.dev + '.avg.p.txt.' + str(FLAGS.start) + '_' + str(FLAGS.end)), 'w')
     line_id = 0
-    for line in file(pjoin(FLAGS.data_dir, FLAGS.dev + '.x.txt')):
-        if line_id >= FLAGS.start:
-            sents = [ele for ele in line.strip('\n').split('\t')][:50]
-            sents = [ele for ele in sents if len(ele.strip()) > 0]
-            output_sents, output_probs = fix_sent(model, sess, sents)
-            f_o.write('\n'.join(output_sents) + '\n')
-            f_p.write('\n'.join(map(str, output_probs)) + '\n')
-        if line_id == FLAGS.end:
-            break
-        line_id += 1
+    with open(pjoin(FLAGS.data_dir, FLAGS.dev + '.x.txt')) as f_:
+        for line in f_:
+            if line_id >= FLAGS.start:
+                sents = [ele for ele in line.strip('\n').split('\t')][:50]
+                sents = [ele for ele in sents if len(ele.strip()) > 0]
+                output_sents, output_probs = fix_sent(model, sess, sents)
+                f_o.write('\n'.join(output_sents) + '\n')
+                f_p.write('\n'.join(list(map(str, output_probs))) + '\n')
+            if line_id == FLAGS.end:
+                break
+            line_id += 1
     f_o.close()
     f_p.close()
 
