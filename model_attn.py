@@ -62,7 +62,6 @@ def _linear(args, output_size, bias, bias_start=0.0, scope=None):
     return res + bias_term
 
 
-
 class GRUCellAttn(rnn_cell.GRUCell):
     def __init__(self, num_units, enc_len, encoder_output, encoder_mask,
                  decode, scope=None):
@@ -108,8 +107,7 @@ class GRUCellAttn(rnn_cell.GRUCell):
         with vs.variable_scope(scope or type(self).__name__, reuse=tf.AUTO_REUSE):
             with vs.variable_scope("Attn2"):
                 # beam_size * num_units
-                gamma_h = tanh(_linear(gru_out, self._num_units,
-                                                True, 1.0))
+                gamma_h = tanh(_linear(gru_out, self._num_units, True, 1.0))
             # len_inp * batch_size(1) * num_units  / beam_size * num_units => len_inp * beam_size
             weights = tf.reduce_sum(self.phi_hs * gamma_h, axis=2)
             # len_inp * batch_size(1) => len_inp * beam_size
@@ -220,7 +218,7 @@ class GRUCellAttn(rnn_cell.GRUCell):
     def beam_flat(self, inputs, state, beam_size, scope=None):
         gru_out, gru_state = super(GRUCellAttn, self).__call__(inputs, state, scope)
         with vs.variable_scope(scope or type(self).__name__):
-            with vs.variable_scope("Attn2"):
+            with vs.variable_scope("Attn2", reuse=True):
                 # beam_size * num_units
                 gamma_h = tanh(_linear(gru_out, self._num_units, True, 1.0))
             phi_hs = array_ops.reshape(self.phi_hs,

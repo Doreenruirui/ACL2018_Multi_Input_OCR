@@ -83,19 +83,21 @@ class Model(object):
             self.encoder_inputs = embedding_ops.embedding_lookup(self.L_enc, self.src_toks)
             self.decoder_inputs = embedding_ops.embedding_lookup(self.L_dec, self.tgt_toks)
 
+
+    def lstm_cell(self):
+        lstm = rnn_cell.DropoutWrapper(tf.contrib.rnn.GRUCell(self.size),
+                                       output_keep_prob=self.keep_prob)
+        return lstm
+
     def setup_encoder(self):
         with vs.variable_scope("Encoder"):
             inp = tf.nn.dropout(self.encoder_inputs, self.keep_prob)
-            fw_cell = rnn_cell.GRUCell(self.size)
-            fw_cell = rnn_cell.DropoutWrapper(
-                fw_cell, output_keep_prob=self.keep_prob)
             self.encoder_fw_cell = rnn_cell.MultiRNNCell(
-                [fw_cell] * self.num_layers, state_is_tuple=True)
-            bw_cell = rnn_cell.GRUCell(self.size)
-            bw_cell = rnn_cell.DropoutWrapper(
-                bw_cell, output_keep_prob=self.keep_prob)
+                [self.lstm_cell() for _ in range(self.num_layers)],
+                state_is_tuple=True)
             self.encoder_bw_cell = rnn_cell.MultiRNNCell(
-                [bw_cell] * self.num_layers, state_is_tuple=True)
+                [self.lstm_cell() for _ in range(self.num_layers)],
+                state_is_tuple=True)
             out, _ = rnn.bidirectional_dynamic_rnn(self.encoder_fw_cell,
                                                    self.encoder_bw_cell,
                                                    inp, self.src_len,
@@ -110,14 +112,12 @@ class Model(object):
 
     def setup_decoder(self):
         with vs.variable_scope("Decoder"):
-            inp =  tf.nn.dropout(self.decoder_inputs, self.keep_prob)
+            inp = tf.nn.dropout(self.decoder_inputs, self.keep_prob)
             if self.num_layers > 1:
                 with vs.variable_scope("RNN"):
-                    decoder_cell = rnn_cell.GRUCell(self.size)
-                    decoder_cell = rnn_cell.DropoutWrapper(decoder_cell,
-                                                           output_keep_prob=self.keep_prob)
                     self.decoder_cell = rnn_cell.MultiRNNCell(
-                        [decoder_cell] * (self.num_layers - 1), state_is_tuple=True)
+                        [self.lstm_cell() for _ in range(self.num_layers - 1)],
+                        state_is_tuple=True)
                     inp, _ = rnn.dynamic_rnn(self.decoder_cell, inp, self.tgt_len,
                                              dtype=tf.float32, time_major=True,
                                              initial_state=self.decoder_cell.zero_state(
@@ -172,7 +172,7 @@ class Model(object):
                 with vs.variable_scope("RNN", reuse=True):
                     rnn_out, rnn_outputs = self.decoder_cell(inputs, state_inputs[:self.num_layers-1])
             with vs.variable_scope("Attn", reuse=True):
-                with vs.variable_scope("RNN", reuse=True):
+                with vs.variable_scope("rnn", reuse=True):
                     if self.decode_method == 'average':
                         out, attn_outputs = self.attn_cell.beam_average(rnn_out, state_inputs[-1], beam_size)
                     elif self.decode_method == 'weight':
@@ -211,9 +211,9 @@ class Model(object):
 
             total_probs = logprobs2d + tf.reshape(beam_probs, [-1, 1])
             total_probs_noEOS = tf.concat([tf.slice(total_probs, [0, 0], [batch_size, util.EOS_ID]),
-                                              tf.tile([[-3e38]], [batch_size, 1]),
-                                              tf.slice(total_probs, [0, util.EOS_ID + 1],
-                                                       [batch_size, self.voc_size - util.EOS_ID - 1])],
+                                           tf.tile([[-3e38]], [batch_size, 1]),
+                                           tf.slice(total_probs, [0, util.EOS_ID + 1],
+                                                    [batch_size, self.voc_size - util.EOS_ID - 1])],
                                           axis=1)
             flat_total_probs = tf.reshape(total_probs_noEOS, [-1])
 
@@ -225,7 +225,7 @@ class Model(object):
 
             next_states = [tf.gather(state, next_bases) for state in state_output]
             next_beam_seqs = tf.concat([tf.gather(beam_seqs, next_bases),
-                                           tf.reshape(next_mods, [-1, 1])], axis=1)
+                                        tf.reshape(next_mods, [-1, 1])], axis=1)
 
             cand_seqs_pad = tf.pad(cand_seqs, [[0, 0], [0, 1]])
             beam_seqs_EOS = tf.pad(beam_seqs, [[0, 0], [0, 1]])
@@ -236,8 +236,6 @@ class Model(object):
             cand_k = tf.minimum(tf.size(new_cand_probs), self.beam_size)
             next_cand_probs, next_cand_indices = tf.nn.top_k(new_cand_probs, k=cand_k)
             next_cand_seqs = tf.gather(new_cand_seqs, next_cand_indices)
-
-
             return [next_cand_probs, next_cand_seqs, time + 1, next_beam_probs, next_beam_seqs] + next_states
 
         var_shape = []
