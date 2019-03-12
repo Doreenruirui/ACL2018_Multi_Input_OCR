@@ -13,9 +13,9 @@ This repository includes the implementation of the method from [our paper](http:
 
 It contains the following file:
 
-####util.py: basic functions used by other scripts.
+#### util.py: basic functions used by other scripts.
 
-####data_tokenize.py: 
+#### data_tokenize.py: 
 * create the vocabulary
     * Parameters:
         * data_dir: the directory where your training data is stored.
@@ -32,13 +32,13 @@ It contains the following file:
 	* INPUT: It takes **DATA_DIR/PREFIX.x.txt** and **DATA_DIR/PREFIX.y.txt** as input and tokenize them with the given vocabulary file
 	* OUTPUT: **DATA_DIR/PREFIX.ids.x** and **DATA_DIR/PREFIX.ids.y**, the tokenized files where each line is the id of each character for the line in the corresponding input file
 
-####flag.py: configuration of the model.
+#### flag.py: configuration of the model.
 
-####model.py: correction model construction, attention-based seq2seq model modified based on the [neural language correction](https://github.com/stanfordmlgroup/nlc) model.
+#### model.py: correction model construction, attention-based seq2seq model modified based on the [neural language correction](https://github.com/stanfordmlgroup/nlc) model.
 
-model_attn.py: attention model with different attention combination strategies: "single", "average", "weight", "flat"
+#### model_attn.py: attention model with different attention combination strategies: "single", "average", "weight", "flat"
 
-####train.py: train the model.
+#### train.py: train the model.
 * Basic Parameters:
     * data_dir: the directory of training and development files
     * voc_dir: the directory of the vocabulary file
@@ -48,7 +48,7 @@ model_attn.py: attention model with different attention combination strategies: 
 * INPUT: It takes the tokenized training files **DATA_DIR/train.ids,x**, **DATA_DIR/train.ids.y** and development files **DATA_DIR/dev.ids.x**, **DATA_DIR/dev.y.ids** as well as the vocabulary file as input, train the model on the training files and evaluate the model on the development files to decide whether to store a new checkpoint.
 * OUTPUT: A correction model.
 
-####decode.py: decode the model.
+#### decode.py: decode the model.
 * Basic Parameters:
     * data_dir: the directory of test file
     * voc_dir: the directory of the vocabulary file
