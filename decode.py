@@ -99,19 +99,16 @@ def decode():
     sess = tf.Session()
     print("Creating %d layers of %d units." % (FLAGS.num_layers, FLAGS.size))
     model = create_model(sess, len(vocab), True)
-    f_o = open(pjoin(folder_out, FLAGS.dev + '.avg' + '.o.txt.' + str(FLAGS.start) + '_' + str(FLAGS.end)), 'w')
-    f_p = open(pjoin(folder_out, FLAGS.dev + '.avg.p.txt.' + str(FLAGS.start) + '_' + str(FLAGS.end)), 'w')
+    f_o = open(pjoin(folder_out,  'test.' + FLAGS.decode + '.o.txt'), 'w')
+    f_p = open(pjoin(folder_out, 'test.' + FLAGS.decode + '.p.txt'), 'w')
     line_id = 0
-    with open(pjoin(FLAGS.data_dir, FLAGS.dev + '.x.txt')) as f_:
+    with open(pjoin(FLAGS.data_dir,  'test.x.txt')) as f_:
         for line in f_:
-            if line_id >= FLAGS.start:
-                sents = [ele for ele in line.strip('\n').split('\t')][:50]
-                sents = [ele for ele in sents if len(ele.strip()) > 0]
-                output_sents, output_probs = fix_sent(model, sess, sents)
-                f_o.write('\n'.join(output_sents) + '\n')
-                f_p.write('\n'.join(list(map(str, output_probs))) + '\n')
-            if line_id == FLAGS.end:
-                break
+            sents = [ele for ele in line.strip('\n').split('\t')][:50]
+            sents = [ele for ele in sents if len(ele.strip()) > 0]
+            output_sents, output_probs = fix_sent(model, sess, sents)
+            f_o.write('\n'.join(output_sents) + '\n')
+            f_p.write('\n'.join(list(map(str, output_probs))) + '\n')
             line_id += 1
     f_o.close()
     f_p.close()

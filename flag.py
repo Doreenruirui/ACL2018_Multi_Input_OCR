@@ -16,12 +16,7 @@ tf.app.flags.DEFINE_string("out_dir", "/tmp", "Output directory")
 tf.app.flags.DEFINE_string("tokenizer", "CHAR", "BPE / CHAR / WORD.")
 tf.app.flags.DEFINE_string("optimizer", "adam", "adam / sgd")
 tf.app.flags.DEFINE_integer("print_every", 1, "How many iterations to do per print.")
-tf.app.flags.DEFINE_string("dev", "dev", "the prefix of development file")
-tf.app.flags.DEFINE_integer("beam_size", 8, "Size of beam.")
-tf.app.flags.DEFINE_integer("start", 0, "Decode starts from this sentence.")
-tf.app.flags.DEFINE_integer("end", 0, "Decode util this sentence.")
+tf.app.flags.DEFINE_integer("beam_size", 128, "Size of beam.")
 tf.app.flags.DEFINE_integer("max_wit", 50, "number of witnesses.")
 tf.app.flags.DEFINE_string("decode", 'single', "single/weight/average/flat")
-tf.app.flags.DEFINE_boolean("flag_ascii", True, "whether to process only ascii characters")
-
 FLAGS = tf.app.flags.FLAGS
