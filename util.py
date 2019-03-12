@@ -3,10 +3,10 @@ import random
 import re
 import os
 
-_PAD = b"<pad>"
-_SOS = b"<sos>"
-_EOS = b"<eos>"
-_UNK = b"<unk>"
+_PAD = "<pad>"
+_SOS = "<sos>"
+_EOS = "<eos>"
+_UNK = "<unk>"
 _START_VOCAB = [_PAD, _SOS, _EOS, _UNK]
 
 PAD_ID = 0
@@ -15,7 +15,7 @@ EOS_ID = 2
 UNK_ID = 3
 
 
-_WORD_SPLIT = re.compile(b"([.,!?\"':;)(])")
+_WORD_SPLIT = re.compile("([.,!?\"':;)(])")
 
 
 def tokenize(string):
@@ -87,7 +87,7 @@ def padded(tokens):
 def read_vocab(path_vocab):
     if os.path.exists(path_vocab):
         rev_vocab = []
-        with open(path_vocab, encoding="ISO-8859-1") as f_:
+        with open(path_vocab, encoding="utf-8") as f_:
             for line in f_:
                 rev_vocab.append(line.strip('\n'))
         vocab = dict([(x, y) for (y, x) in enumerate(rev_vocab)])
