@@ -100,7 +100,7 @@ class GRUCellAttn(rnn_cell.GRUCell):
             with vs.variable_scope("AttnConcat"):
                 out = tf.nn.relu(_linear(tf.concat([context, gru_out], -1),
                                          self._num_units, True, 1.0))
-            return (out, out)
+            return out, out
 
     def beam_single(self, inputs, state, beam_size, scope=None):
         gru_out, gru_state = super(GRUCellAttn, self).__call__(inputs, state, scope)
@@ -123,7 +123,7 @@ class GRUCellAttn(rnn_cell.GRUCell):
             with vs.variable_scope("AttnConcat"):
                 out = tf.nn.relu(_linear(tf.concat([context, gru_out], -1),
                                          self._num_units, True, 1.0))
-            return (out, out)
+            return out, out
 
     def beam_average(self, inputs, state, beam_size, scope=None):
         gru_out, gru_state = super(GRUCellAttn, self).__call__(inputs, state, scope)
@@ -161,7 +161,7 @@ class GRUCellAttn(rnn_cell.GRUCell):
             with vs.variable_scope("AttnConcat"):
                 out = tf.nn.relu(_linear(tf.concat([context, gru_out], -1),
                                                   self._num_units, True, 1.0))
-            return (out, out)
+            return out, out
 
     def beam_weighted(self, inputs, state, beam_size, scope=None):
         gru_out, gru_state = super(GRUCellAttn, self).__call__(inputs, state,
@@ -169,8 +169,7 @@ class GRUCellAttn(rnn_cell.GRUCell):
         with vs.variable_scope(scope or type(self).__name__):
             with vs.variable_scope("Attn2"):
                 # beam_size * num_units
-                gamma_h = tanh(_linear(gru_out,
-                                                self._num_units, True, 1.0))
+                gamma_h = tanh(_linear(gru_out, self._num_units, True, 1.0))
 
             phi_hs = array_ops.reshape(self.phi_hs,
                                        [-1, self.enc_len, 1, self._num_units])
@@ -213,7 +212,7 @@ class GRUCellAttn(rnn_cell.GRUCell):
             with vs.variable_scope("AttnConcat"):
                 out = tf.nn.relu(_linear(tf.concat([context, gru_out], -1),
                                          self._num_units, True, 1.0))
-            return (out, out)
+            return out, out
 
     def beam_flat(self, inputs, state, beam_size, scope=None):
         gru_out, gru_state = super(GRUCellAttn, self).__call__(inputs, state, scope)
@@ -233,7 +232,7 @@ class GRUCellAttn(rnn_cell.GRUCell):
                            [1, 1, beam_size])
             # num_wit * len_inp * beam_size
             weights = tf.where(mask, weights,
-                                tf.ones_like(weights) * (-2 ** 32 + 1))
+                               tf.ones_like(weights) * (-2 ** 32 + 1))
             # beam_size * (num_wit * len_inp)
             weights = tf.transpose(tf.reshape(weights, [-1, beam_size]))
             weights = tf.nn.softmax(weights)
@@ -248,5 +247,5 @@ class GRUCellAttn(rnn_cell.GRUCell):
             with vs.variable_scope("AttnConcat"):
                 out = tf.nn.relu(_linear(tf.concat([context, gru_out], -1),
                                          self._num_units, True, 1.0))
-            return (out, out)
+            return out, out
 
