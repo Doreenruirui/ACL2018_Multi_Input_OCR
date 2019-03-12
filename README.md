@@ -34,7 +34,8 @@ It contains the following file:
 
 #### flag.py: configuration of the model.
 
-#### model.py: correction model construction, attention-based seq2seq model modified based on the [neural language correction](https://github.com/stanfordmlgroup/nlc) model.
+#### model.py: construct the correction model 
+   It is an attention-based seq2seq model modified based on the [neural language correction](https://github.com/stanfordmlgroup/nlc) model.
 
 #### model_attn.py: attention model with different attention combination strategies: "single", "average", "weight", "flat"
 
