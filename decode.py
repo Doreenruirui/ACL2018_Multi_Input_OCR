@@ -25,12 +25,12 @@ def create_model(session, vocab_size, forward_only):
                             FLAGS.learning_rate, FLAGS.learning_rate_decay_factor,
                             forward_only=forward_only, decode=FLAGS.decode)
     ckpt = tf.train.get_checkpoint_state(FLAGS.train_dir)
-    # if ckpt and tf.gfile.Exists(ckpt.model_checkpoint_path):
-    print("Reading model parameters from %s" % ckpt.model_checkpoint_path)
-    model.saver.restore(session, ckpt.model_checkpoint_path)
-    # else:
-    #     print("Created model with fresh parameters.")
-    #     session.run(tf.global_variables_initializer())
+    if ckpt and tf.train.checkpoint_exists(ckpt.model_checkpoint_path):
+        print("Reading model parameters from %s" % ckpt.model_checkpoint_path)
+        model.saver.restore(session, ckpt.model_checkpoint_path)
+    else:
+        print("Created model with fresh parameters.")
+        session.run(tf.global_variables_initializer())
     return model
 
 

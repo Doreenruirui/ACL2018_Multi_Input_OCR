@@ -17,6 +17,7 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 
+
 def create_model(session, vocab_size, forward_only):
     model = ocr_model.Model(FLAGS.size, vocab_size, FLAGS.num_layers,
                             FLAGS.max_gradient_norm, FLAGS.learning_rate,

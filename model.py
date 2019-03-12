@@ -179,8 +179,10 @@ class Model(object):
                         out, attn_outputs = self.attn_cell.beam_weighted(rnn_out, state_inputs[-1], beam_size)
                     elif self.decode_method == 'flat':
                         out, attn_outputs = self.attn_cell.beam_flat(rnn_out, state_inputs[-1], beam_size)
-                    else:
+                    elif self.decode_method == 'single':
                         out, attn_outputs = self.attn_cell.beam_single(rnn_out, state_inputs[-1], beam_size)
+                    else:
+                        raise('Please choose a decoder from average/weight/flat/single')
         state_outputs = rnn_outputs + (attn_outputs, )
         return out, state_outputs
 
@@ -232,7 +234,12 @@ class Model(object):
             new_cand_seqs = tf.concat([cand_seqs_pad, beam_seqs_EOS], axis=0)
             EOS_probs = tf.slice(total_probs, [0, util.EOS_ID], [batch_size, 1])
 
+            new_cand_len = tf.reduce_sum(tf.cast(tf.greater(tf.abs(new_cand_seqs), 0), tf.int32), axis=1)
             new_cand_probs = tf.concat([cand_probs, tf.reshape(EOS_probs, [-1])], axis=0)
+            new_cand_probs = tf.where(tf.greater(self.len_inp - 10, new_cand_len),
+                                      tf.ones_like(new_cand_probs) * -3e38,
+                                      new_cand_probs)
+
             cand_k = tf.minimum(tf.size(new_cand_probs), self.beam_size)
             next_cand_probs, next_cand_indices = tf.nn.top_k(new_cand_probs, k=cand_k)
             next_cand_seqs = tf.gather(new_cand_seqs, next_cand_indices)

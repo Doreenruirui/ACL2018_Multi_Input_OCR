@@ -7,6 +7,7 @@ import re
 import argparse
 import os
 
+
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir', type=str, help='folder of data.')
@@ -111,44 +112,50 @@ def merge_file(data_dir, out_dir):   # merge all the output files and informatio
     total_num_z = 0
     for fn in list_out_file:
         num_line = 0
-        for line in file(fn + '.x'):
-            out_x.write(line)
-            num_line += 1
-        for line in file(fn + '.y'):
-            out_y.write(line)
-        for line in file(fn + '.z'):
-            out_z.write(line)
+        with open(fn + '.x') as f_:
+            for line in f_:
+                out_x.write(line)
+                num_line += 1
+        with open(fn + '.y') as f_:
+            for line in f_:
+                out_y.write(line)
+        with open(fn + '.z') as f_:
+            for line in f_:
+                out_y.write(line)
         dict_x2liney = {}
         dict_x2linez = {}
-        for line in file(fn + '.y.info'):
-            line = line.split('\t')
-            line[0] = str(int(line[0]) + last_num_line)
-            dict_x2liney[line[0]] = total_num_y
-            total_num_y += 1
-            out_y_info.write('\t'.join(line))
-        for line in file(fn + '.z.info'):
-            line = line.split('\t')
-            line[0] = str(int(line[0]) + last_num_line)
-            dict_x2linez[line[0]] = total_num_z
-            total_num_z += 1
-            out_z_info.write('\t'.join(line))
+        with open(fn + '.y.info') as f_:
+            for line in f_:
+                line = line.split('\t')
+                line[0] = str(int(line[0]) + last_num_line)
+                dict_x2liney[line[0]] = total_num_y
+                total_num_y += 1
+                out_y_info.write('\t'.join(line))
+        with open(fn + '.z.info') as f_:
+            for line in f_:
+                line = line.split('\t')
+                line[0] = str(int(line[0]) + last_num_line)
+                dict_x2linez[line[0]] = total_num_z
+                total_num_z += 1
+                out_z_info.write('\t'.join(line))
         num_group = 0
-        for line in file(fn + '.x.info'):
-            line = line.strip('\r\n').split('\t')
-            cur_group = int(line[0])
-            line[0] = str(int(line[0]) + last_num_group)
-            line[1] = str(int(line[1]) + last_num_line)
-            if line[1] in dict_x2liney:
-                line.append(str(dict_x2liney[line[1]]))
-            else:
-                line[5] = '0'
-            if line[1] in dict_x2linez:
-                line.append(str(dict_x2linez[line[1]]))
-            else:
-                line[6] = '0'
-            out_x_info.write('\t'.join(line) + '\n')
-            if cur_group > num_group:
-                num_group = cur_group
+        with open(fn + '.x.info') as f_:
+            for line in f_:
+                line = line.strip('\r\n').split('\t')
+                cur_group = int(line[0])
+                line[0] = str(int(line[0]) + last_num_group)
+                line[1] = str(int(line[1]) + last_num_line)
+                if line[1] in dict_x2liney:
+                    line.append(str(dict_x2liney[line[1]]))
+                else:
+                    line[5] = '0'
+                if line[1] in dict_x2linez:
+                    line.append(str(dict_x2linez[line[1]]))
+                else:
+                    line[6] = '0'
+                out_x_info.write('\t'.join(line) + '\n')
+                if cur_group > num_group:
+                    num_group = cur_group
         last_num_group += num_group
         last_num_line += num_line
         for post_fix in ['.x', '.y', '.z']:
@@ -178,6 +185,7 @@ def main():
     data_dir = args.data_dir
     out_dir = args.out_dir
     process_data(data_dir, out_dir)
+
 
 if __name__ == '__main__':
     main()

@@ -10,8 +10,6 @@ def get_args():
     parser.add_argument('--voc_dir', type=str, default='/tmp', help='Data directory')
     parser.add_argument('--gen_voc', type=lambda x: x.lower() == 'true', default=False,
                         help='True/False: whether to create a vocabulary from the input file.')
-    parser.add_argument('--flag_ascii', type=lambda x: x.lower() == 'true', default=False,
-                        help='True/False: whether to create a vocabulary with ascii characters.')
     parser.add_argument('--prefix', type=str, default=None,
                         help='train/dev/test: prefix of the file to be tokenzied.')
     args = parser.parse_args()
@@ -21,7 +19,7 @@ def get_args():
 def create_vocabulary(data_dir, file_prefix):
     def tokenize_file(path):
         print("Create vocabulary from file: %s" % path)
-        with open(path, 'rb') as f_:
+        with open(path, encoding='utf-8') as f_:
             for line in f_:
                 line = line.strip()
                 tokens = list(line)
@@ -36,14 +34,14 @@ def create_vocabulary(data_dir, file_prefix):
     tokenize_file(path_y)
     vocab_list = util._START_VOCAB + sorted(vocab, key=vocab.get, reverse=True)
     print("Vocabulary size: %d" % len(vocab_list))
-    with open(path_vocab, mode="wb") as f:
+    with open(path_vocab, mode="w", encoding='utf-8') as f:
         for ch in vocab_list:
             f.write(ch + "\n")
 
 
-def data_to_token_ids(data_path, target_path, vocab, flag_ascii=False):
+def data_to_token_ids(data_path, target_path, vocab):
     print("Tokenizing data in %s" % data_path)
-    with open(data_path, mode="r") as data_file:
+    with open(data_path, encoding='utf-8') as data_file:
         with open(target_path, mode="w") as tokens_file:
             for line in data_file:
                 line = line.strip('\n')
@@ -51,24 +49,24 @@ def data_to_token_ids(data_path, target_path, vocab, flag_ascii=False):
                 tokens_file.write(" ".join([str(tok) for tok in token_ids]) + "\n")
 
 
-def tokenize_data(data_dir, prefix):
-    path_vocab = os.path.join(data_dir, "vocab.dat")
+def tokenize_data(data_dir, voc_dir, prefix):
+    path_vocab = os.path.join(voc_dir, "vocab.dat")
     vocab, _ = util.read_vocab(path_vocab)
-    path_x = os.path.join(data_dir,  prefix + ".x.txt")
+    path_x = os.path.join(data_dir, prefix + ".x.txt")
     path_y = os.path.join(data_dir, prefix + ".y.txt")
     y_ids_path = os.path.join(data_dir, prefix + ".ids.y")
     x_ids_path = os.path.join(data_dir, prefix + ".ids.x")
     data_to_token_ids(path_x, x_ids_path, vocab)
     data_to_token_ids(path_y, y_ids_path, vocab)
-    return (x_ids_path, y_ids_path)
+    return x_ids_path, y_ids_path
 
 
 def main():
     args = get_args()
     if args.gen_voc:
-        create_vocabulary(args.data_dir, args.voc_dir, args.prefix)
+        create_vocabulary(args.data_dir, args.prefix)
     if args.prefix is not None:
-        tokenize_data(args.data_dir, args.prefix)
+        tokenize_data(args.data_dir, args.voc_dir, args.prefix)
 
 
 if __name__ == "__main__":
