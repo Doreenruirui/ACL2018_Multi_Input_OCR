@@ -61,8 +61,8 @@ def train():
     logging.info("Get NLC data in %s" % FLAGS.data_dir)
     x_train = pjoin(FLAGS.data_dir, 'train.ids.x')
     y_train = pjoin(FLAGS.data_dir, 'train.ids.y')
-    x_dev = pjoin(FLAGS.data_dir, FLAGS.dev + '.ids.x')
-    y_dev = pjoin(FLAGS.data_dir, FLAGS.dev + '.ids.y')
+    x_dev = pjoin(FLAGS.data_dir,  'dev.ids.x')
+    y_dev = pjoin(FLAGS.data_dir,  'dev.ids.y')
     vocab_path = pjoin(FLAGS.voc_dir, "vocab.dat")
     vocab, rev_vocab = read_vocab(vocab_path)
     vocab_size = len(vocab)
@@ -78,7 +78,7 @@ def train():
         logging.info("Creating %d layers of %d units." % (FLAGS.num_layers, FLAGS.size))
         model, epoch = create_model(sess, vocab_size, False)
 
-        # logging.info('Initial validation cost: %f' % validate(model, sess, x_dev, y_dev))
+        logging.info('Initial validation cost: %f' % validate(model, sess, x_dev, y_dev))
 
         tic = time.time()
         params = tf.trainable_variables()
@@ -136,8 +136,10 @@ def train():
 
                 print(current_step, cost)
                 if current_step % FLAGS.print_every == 0:
-                    logging.info('epoch %d, iter %d, cost %f, exp_cost %f, grad norm %f, param norm %f, tps %f, length mean/std %f/%f' %
-                                 (epoch, current_step, cost, exp_cost / exp_length, grad_norm, param_norm, tps, mean_length, std_length))
+                    logging.info('epoch %d, iter %d, cost %f, exp_cost %f, grad norm %f, param norm %f,'
+                                 ' tps %f, length mean/std %f/%f' %
+                                 (epoch, current_step, cost, exp_cost / exp_length, grad_norm, param_norm,
+                                  tps, mean_length, std_length))
             epoch_toc = time.time()
 
             ## Checkpoint
@@ -158,8 +160,10 @@ def train():
                 model.saver.save(sess, checkpoint_path, global_step=epoch)
             sys.stdout.flush()
 
+
 def main(_):
     train()
+
 
 if __name__ == "__main__":
     tf.app.run()
