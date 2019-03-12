@@ -27,7 +27,7 @@ def create_model(session, vocab_size, forward_only):
                             decode=FLAGS.decode)
     ckpt = tf.train.get_checkpoint_state(FLAGS.train_dir)
     num_epoch = 0
-    if ckpt and tf.gfile.Exists(ckpt.model_checkpoint_path):
+    if ckpt and tf.train.checkpoint_exists(ckpt.model_checkpoint_path):
         logging.info("Reading model parameters from %s" % ckpt.model_checkpoint_path)
         model.saver.restore(session, ckpt.model_checkpoint_path)
         num_epoch = int(ckpt.model_checkpoint_path.split('-')[1])
