@@ -210,7 +210,7 @@ class GRUCellAttn(rnn_cell.GRUCell):
                                                  axis=0),
                                    [beam_size, 2 * self._num_units])
             with vs.variable_scope("AttnConcat"):
-                out = tf.nn.relu(_linear(tf.concat([context, gru_out], -1),
+                out = tf.nn.relu(_linear(tf.concat([context_w, gru_out], -1),
                                          self._num_units, True, 1.0))
             return out, out
 

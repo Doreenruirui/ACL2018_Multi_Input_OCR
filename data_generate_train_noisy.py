@@ -71,12 +71,13 @@ def generate_train_noisy(data_dir, out_dir, file_prefix, lm_file, lm_score, flag
     def read_file(path):
         line_id = 0
         res = []
-        for line in file(path):
-            if line_id >= start:
-                res.append(line)
-                if line_id + 1 == end:
-                    break
-            line_id += 1
+        with open(path) as f_:
+            for line in f_:
+                if line_id >= start:
+                    res.append(line)
+                    if line_id + 1 == end:
+                        break
+                line_id += 1
         return res
     list_info = read_file(join(data_dir, file_prefix + '.info.txt'))
     list_x = read_file(join(data_dir, file_prefix + '.x.txt'))
