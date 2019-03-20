@@ -19,17 +19,18 @@ def get_train_single(folder_data, train, ins_ratio, del_ratio, sub_ratio):
     str_truth = ''              # get all the characters in file
     len_line = []               # get the number of characters in each line
     vocab = {}                  # get all the unique characters in file
-    for line in file(join(folder_data, train + '.y.txt')):
-        str_truth += line.strip()
-        for ele in remove_nonascii(line.strip()):
-            vocab[ele] = 1
-        len_line.append(len(line.strip()))
+    with open(join(folder_data, train + '.y.txt')) as f_:
+        for line in f_:
+            str_truth += line.strip()
+            for ele in remove_nonascii(line.strip()):
+                vocab[ele] = 1
+            len_line.append(len(line.strip()))
     str_truth = list(str_truth)
     num_char = len(str_truth)
-    print 'Number of Characters in Corpus: %d' % num_char
+    print('Number of Characters in Corpus: %d' % num_char)
     vocab = vocab.keys()
     size_voc = len(vocab)
-    print 'Number of Unique Characters in Corpus: %d' % size_voc
+    print('Number of Unique Characters in Corpus: %d' % size_voc)
     error_ratio = ins_ratio + del_ratio + sub_ratio
     ins_v = ins_ratio / error_ratio
     del_v = (ins_ratio + del_ratio) / error_ratio

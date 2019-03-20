@@ -22,7 +22,7 @@ replace_xml = {'&lt;': '<', '&gt;': '>', '&quot;': '"',
 
 def process_file(paras):
     fn, out_fn = paras
-    with gzip.open(fn, 'r') as f_:
+    with gzip.open(fn, 'rb') as f_:
         content = f_.readlines()
     out_x = open(out_fn + '.x', 'w')                    # output file for OCR'd text
     out_y = open(out_fn + '.y', 'w')                    # output file for duplicated texts (witnesses)
@@ -39,7 +39,7 @@ def process_file(paras):
     cur_line_no = 0
     cur_group = 0
     for line in content:
-        line = json.loads(line.strip('\r\n'))
+        line = json.loads(line.strip(b'\r\n'))
         cur_id = line['id']
         lines = line['lines']
         for item in lines:
@@ -53,7 +53,7 @@ def process_file(paras):
                              if len(ele.strip()) > 0])
             if len(text.strip()) == 0:
                 continue
-            out_x.write(text.encode('utf-8') + '\n')
+            out_x.write(text + '\n')
             wit_info = ''
             wit_str = ''
             man_str = ''
@@ -74,17 +74,17 @@ def process_file(paras):
                     if 'manual' in wit_id:                              # get the manual transcription
                         num_manul += 1
                         man_info += str(wit_id) + '\t' + str(wit_begin) + '\t'
-                        man_str += wit_text.encode('utf-8') + '\t'
+                        man_str += wit_text + '\t'
                     else:                                               # get the witnesses
                         num_wit += 1
                         wit_info += str(wit_id) + '\t' + str(wit_begin) + '\t'
-                        wit_str += wit_text.encode('utf-8') + '\t'
+                        wit_str += wit_text + '\t'
             if len(man_str.strip()) > 0:
                 out_z.write(man_str[:-1] + '\n')
                 out_z_info.write(str(cur_line_no) + '\t' + man_info[:-1] + '\n')
             if len(wit_str.strip()) > 0:
                 out_y.write(wit_str[:-1] + '\n')
-                out_y_info.write(str(cur_line_no) + '\t' +  wit_info[:-1] + '\n')
+                out_y_info.write(str(cur_line_no) + '\t' + wit_info[:-1] + '\n')
             out_x_info.write(str(cur_group) + '\t' + str(cur_line_no) + '\t' + str(cur_id) + '\t' + str(begin) + '\t' + str(len(text) + begin) + '\t' + str(num_wit) + '\t' + str(num_manul) + '\n')
             cur_line_no += 1
         cur_group += 1
@@ -97,7 +97,7 @@ def process_file(paras):
 
 
 def merge_file(data_dir, out_dir):   # merge all the output files and information files
-    list_file = [ele for ele in listdir(data_dir) if ele.startswith('part')]
+    list_file = [ele for ele in listdir(data_dir) if ele.startswith('part-')]
     list_out_file = [join(out_dir, 'pair.' + str(i)) for i in range(len(list_file))]
     out_fn = join(out_dir, 'pair')
     out_x = open(out_fn + '.x', 'w')
@@ -121,7 +121,7 @@ def merge_file(data_dir, out_dir):   # merge all the output files and informatio
                 out_y.write(line)
         with open(fn + '.z') as f_:
             for line in f_:
-                out_y.write(line)
+                out_z.write(line)
         dict_x2liney = {}
         dict_x2linez = {}
         with open(fn + '.y.info') as f_:
@@ -171,13 +171,13 @@ def merge_file(data_dir, out_dir):   # merge all the output files and informatio
 
 def process_data(data_dir, out_dir):
     list_file = [ele for ele in listdir(data_dir) if ele.startswith('part')]
-    list_out_file= [join(out_dir, 'pair.' + str(i)) for i in range(len(list_file))]
+    list_out_file = [join(out_dir, 'pair.' + str(i)) for i in range(len(list_file))]
     list_file = [join(data_dir, ele) for ele in list_file]
     if not exists(out_dir):
         makedirs(out_dir)
+    # process_file((list_file[0], list_out_file[0]))
     pool = Pool(100)
     pool.map(process_file, zip(list_file, list_out_file))
-    merge_file(data_dir, out_dir)
 
 
 def main():
@@ -185,6 +185,7 @@ def main():
     data_dir = args.data_dir
     out_dir = args.out_dir
     process_data(data_dir, out_dir)
+    merge_file(data_dir, out_dir)
 
 
 if __name__ == '__main__':
