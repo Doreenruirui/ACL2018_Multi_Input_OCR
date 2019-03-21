@@ -12,7 +12,29 @@ This repository includes the implementation of the method from [our paper](http:
 }
 
 It contains the following file:
-
+#### data_process.py: 
+* Process the input files:
+    * Parameters:
+        * data_dir: the directory storing input json files that contains OCR output with their manual transcription and wintesses.
+        * out_dir: the output directory 
+    * Input: It takes the json files in **DATA_DIR** as input.
+    * Output: 
+        * **OUT_DIR/pair.x**, it contains the OCR'd Output, each line corresponds to a line in the original image.
+        * **OUT_DIR/pair.x.info**, it contains the infomation for each OCR'd line split by tab:(group no., line no., file_id, begin index in file, end index in file, number of witnesses, number of manual transcriptions)
+        * **OUT_DIR/pair.y**, each line corresponds to the witnesses of one line in file "pair.x" split by tab('\t')
+        * **OUT_DIR/pair.y.info**, it contains the information for each witness line in 'pair.y' split by tab: (line_no, file_id, begin index in file). If "line no." = 100 for the 10th line in "pair.y.info", it means that the 10th line of "pair.y" contains the witnesses of the 101th line of file "pair.x".
+        * **OUT_DIR/pair.z**, each line corresponds to the manual transcription of one line in file "pair.x" split by tab('\t')
+        * **OUT_DIR/pair.z.info**, it contains the information for each witness line in 'pair.y' split by tab: (line_no, file_id, begin index in file). If "line no." = 100 for the 10th line in "pair.z.info", it means that the 10th line of "pair.z" contains the manual transcription of the 101th line of file "pair.x".
+ 
+#### data_train.py:
+* Generate the supervised training data:
+    * Parameters:
+         * data_dir: the directory storing the output from data_process.py.
+         * out_dir: the output directory for the training, development and test data.
+         * train_ratio: the ratio to split the training, development and test data.
+    * Input: the output files from data_process.py
+    * Output: **OUT_DIR/train.x.txt**, **OUT_DIR/train.y.txt**, **OUT_DIR/dev.x.txt**, **OUT_DIR/dev.y.txt**, **OUT_DIR/test.x.txt**, **OUT_DIR/test.y.txt**. Here files with postfix '.x.txt' are the OCR output and files with postfix '.y.txt' are the manual transcription.
+ 
 #### util.py: basic functions used by other scripts.
 
 #### data_tokenize.py: 
