@@ -1,6 +1,10 @@
 from levenshtein import align_pair, align_beam
 from multiprocessing import Pool
 import numpy as np
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3665913c3153964f96e16c9f07210405a89110a2
 import argparse
 
 
@@ -16,8 +20,11 @@ def get_args():
 
 
 def error_rate(dis_xy, len_y):
+<<<<<<< HEAD
     dis_xy = np.asarray(dis_xy)
     len_y = np.asarray(len_y)
+=======
+>>>>>>> 3665913c3153964f96e16c9f07210405a89110a2
     macro_error = np.mean(dis_xy/len_y)
     micro_error = np.sum(dis_xy) / np.sum(len_y)
     return micro_error, macro_error
@@ -28,7 +35,11 @@ def evaluate(args, beam_size=100):
     list_dec = []
     list_beam = []
     list_top = []
+<<<<<<< HEAD
     with open(args.input, encoding='utf-8') as f_:
+=======
+    with open(args.input) as f_:
+>>>>>>> 3665913c3153964f96e16c9f07210405a89110a2
         for line in f_:
             line_id += 1
             cur_str = line.strip()
@@ -42,7 +53,11 @@ def evaluate(args, beam_size=100):
             list_beam.append(cur_str)
     list_dec.append(list_beam)
 
+<<<<<<< HEAD
     with open(args.gt, encoding='utf-8') as f_:
+=======
+    with open(args.gt, 'r') as f_:
+>>>>>>> 3665913c3153964f96e16c9f07210405a89110a2
         list_y = [ele.strip('\n').split('\t')[0].strip() for ele in f_.readlines()]
         if args.lowercase:
             list_y = [ele.lower() for ele in list_y]
