@@ -17,9 +17,6 @@ A trained model for the richmond dispatch newspaper data could be find [here](ht
 It contains the following file:
 
 #### 1. data_process.py: 
-=======
-It contains the following file:
-#### data_process.py: 
 * Process the input files:
     * Parameters:
         * data_dir: the directory storing input json files that contains OCR output with their manual transcription and wintesses.
@@ -33,10 +30,7 @@ It contains the following file:
         * **OUT_DIR/pair.z**, each line corresponds to the manual transcription of one line in file "pair.x" split by tab('\t')
         * **OUT_DIR/pair.z.info**, it contains the information for each witness line in 'pair.y' split by tab: (line_no, file_id, begin index in file). If "line no." = 100 for the 10th line in "pair.z.info", it means that the 10th line of "pair.z" contains the manual transcription of the 101th line of file "pair.x".
  
-<<<<<<< HEAD
 #### 2. data_train.py:
-=======
-#### data_train.py:
 * Generate the supervised training data:
     * Parameters:
          * data_dir: the directory storing the output from data_process.py.
@@ -48,10 +42,6 @@ It contains the following file:
 #### 3. util.py: basic functions used by other scripts.
 
 #### 4. data_tokenize.py: 
-=======
-#### util.py: basic functions used by other scripts.
-
-#### data_tokenize.py: 
 * create the vocabulary
     * Parameters:
         * data_dir: the directory where your training data is stored.
@@ -76,15 +66,6 @@ It contains the following file:
 #### 7. model_attn.py: attention model with different attention combination strategies: "single", "average", "weight", "flat"
 
 #### 8. train.py: train the model.
-=======
-#### flag.py: configuration of the model.
-
-#### model.py: construct the correction model 
-   It is an attention-based seq2seq model modified based on the [neural language correction](https://github.com/stanfordmlgroup/nlc) model.
-
-#### model_attn.py: attention model with different attention combination strategies: "single", "average", "weight", "flat"
-
-#### train.py: train the model.
 * Basic Parameters:
     * data_dir: the directory of training and development files
     * voc_dir: the directory of the vocabulary file
@@ -94,10 +75,8 @@ It contains the following file:
 * INPUT: It takes the tokenized training files **DATA_DIR/train.ids,x**, **DATA_DIR/train.ids.y** and development files **DATA_DIR/dev.ids.x**, **DATA_DIR/dev.y.ids** as well as the vocabulary file as input, train the model on the training files and evaluate the model on the development files to decide whether to store a new checkpoint.
 * OUTPUT: A correction model.
 
-<<<<<<< HEAD
+
 #### 9. decode.py: decode the model.
-=======
-#### decode.py: decode the model.
 * Basic Parameters:
     * data_dir: the directory of test file
     * voc_dir: the directory of the vocabulary file
