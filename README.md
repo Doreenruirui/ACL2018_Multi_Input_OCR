@@ -11,8 +11,10 @@ This repository includes the implementation of the method from [our paper](http:
   year={2018}
 }
 
+A trained model for the richmond dispatch newspaper data could be find [here](https://drive.google.com/open?id=1CB0uJd326jGrHtd6clO3h3Kx7TmLvioU). And the corresponding vocabulary could be find [here](https://drive.google.com/open?id=18x-eiH8LbU0PrnlZkORhTqBgsCYggNJz).
 It contains the following file:
-#### data_process.py: 
+
+#### 1. data_process.py: 
 * Process the input files:
     * Parameters:
         * data_dir: the directory storing input json files that contains OCR output with their manual transcription and wintesses.
@@ -26,7 +28,7 @@ It contains the following file:
         * **OUT_DIR/pair.z**, each line corresponds to the manual transcription of one line in file "pair.x" split by tab('\t')
         * **OUT_DIR/pair.z.info**, it contains the information for each witness line in 'pair.y' split by tab: (line_no, file_id, begin index in file). If "line no." = 100 for the 10th line in "pair.z.info", it means that the 10th line of "pair.z" contains the manual transcription of the 101th line of file "pair.x".
  
-#### data_train.py:
+#### 2. data_train.py:
 * Generate the supervised training data:
     * Parameters:
          * data_dir: the directory storing the output from data_process.py.
@@ -35,9 +37,9 @@ It contains the following file:
     * Input: the output files from data_process.py
     * Output: **OUT_DIR/train.x.txt**, **OUT_DIR/train.y.txt**, **OUT_DIR/dev.x.txt**, **OUT_DIR/dev.y.txt**, **OUT_DIR/test.x.txt**, **OUT_DIR/test.y.txt**. Here files with postfix '.x.txt' are the OCR output and files with postfix '.y.txt' are the manual transcription.
  
-#### util.py: basic functions used by other scripts.
+#### 3. util.py: basic functions used by other scripts.
 
-#### data_tokenize.py: 
+#### 4. data_tokenize.py: 
 * create the vocabulary
     * Parameters:
         * data_dir: the directory where your training data is stored.
@@ -54,14 +56,14 @@ It contains the following file:
 	* INPUT: It takes **DATA_DIR/PREFIX.x.txt** and **DATA_DIR/PREFIX.y.txt** as input and tokenize them with the given vocabulary file
 	* OUTPUT: **DATA_DIR/PREFIX.ids.x** and **DATA_DIR/PREFIX.ids.y**, the tokenized files where each line is the id of each character for the line in the corresponding input file
 
-#### flag.py: configuration of the model.
+#### 5. flag.py: configuration of the model.
 
-#### model.py: construct the correction model 
+#### 6. model.py: construct the correction model 
    It is an attention-based seq2seq model modified based on the [neural language correction](https://github.com/stanfordmlgroup/nlc) model.
 
-#### model_attn.py: attention model with different attention combination strategies: "single", "average", "weight", "flat"
+#### 7. model_attn.py: attention model with different attention combination strategies: "single", "average", "weight", "flat"
 
-#### train.py: train the model.
+#### 8. train.py: train the model.
 * Basic Parameters:
     * data_dir: the directory of training and development files
     * voc_dir: the directory of the vocabulary file
@@ -71,7 +73,7 @@ It contains the following file:
 * INPUT: It takes the tokenized training files **DATA_DIR/train.ids,x**, **DATA_DIR/train.ids.y** and development files **DATA_DIR/dev.ids.x**, **DATA_DIR/dev.y.ids** as well as the vocabulary file as input, train the model on the training files and evaluate the model on the development files to decide whether to store a new checkpoint.
 * OUTPUT: A correction model.
 
-#### decode.py: decode the model.
+#### 9. decode.py: decode the model.
 * Basic Parameters:
     * data_dir: the directory of test file
     * voc_dir: the directory of the vocabulary file
