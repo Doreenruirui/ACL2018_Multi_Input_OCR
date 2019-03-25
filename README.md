@@ -11,7 +11,6 @@ This repository includes the implementation of the method from [our paper](http:
   year={2018}
 }
 
-<<<<<<< HEAD
 A trained model for the richmond dispatch newspaper data could be find [here](https://drive.google.com/open?id=1CB0uJd326jGrHtd6clO3h3Kx7TmLvioU). And the corresponding vocabulary could be find [here](https://drive.google.com/open?id=18x-eiH8LbU0PrnlZkORhTqBgsCYggNJz).
 
 
@@ -21,7 +20,6 @@ It contains the following file:
 =======
 It contains the following file:
 #### data_process.py: 
->>>>>>> 3665913c3153964f96e16c9f07210405a89110a2
 * Process the input files:
     * Parameters:
         * data_dir: the directory storing input json files that contains OCR output with their manual transcription and wintesses.
@@ -39,7 +37,6 @@ It contains the following file:
 #### 2. data_train.py:
 =======
 #### data_train.py:
->>>>>>> 3665913c3153964f96e16c9f07210405a89110a2
 * Generate the supervised training data:
     * Parameters:
          * data_dir: the directory storing the output from data_process.py.
@@ -48,7 +45,6 @@ It contains the following file:
     * Input: the output files from data_process.py
     * Output: **OUT_DIR/train.x.txt**, **OUT_DIR/train.y.txt**, **OUT_DIR/dev.x.txt**, **OUT_DIR/dev.y.txt**, **OUT_DIR/test.x.txt**, **OUT_DIR/test.y.txt**. Here files with postfix '.x.txt' are the OCR output and files with postfix '.y.txt' are the manual transcription.
  
-<<<<<<< HEAD
 #### 3. util.py: basic functions used by other scripts.
 
 #### 4. data_tokenize.py: 
@@ -56,7 +52,6 @@ It contains the following file:
 #### util.py: basic functions used by other scripts.
 
 #### data_tokenize.py: 
->>>>>>> 3665913c3153964f96e16c9f07210405a89110a2
 * create the vocabulary
     * Parameters:
         * data_dir: the directory where your training data is stored.
@@ -73,7 +68,6 @@ It contains the following file:
 	* INPUT: It takes **DATA_DIR/PREFIX.x.txt** and **DATA_DIR/PREFIX.y.txt** as input and tokenize them with the given vocabulary file
 	* OUTPUT: **DATA_DIR/PREFIX.ids.x** and **DATA_DIR/PREFIX.ids.y**, the tokenized files where each line is the id of each character for the line in the corresponding input file
 
-<<<<<<< HEAD
 #### 5. flag.py: configuration of the model.
 
 #### 6. model.py: construct the correction model 
@@ -91,7 +85,6 @@ It contains the following file:
 #### model_attn.py: attention model with different attention combination strategies: "single", "average", "weight", "flat"
 
 #### train.py: train the model.
->>>>>>> 3665913c3153964f96e16c9f07210405a89110a2
 * Basic Parameters:
     * data_dir: the directory of training and development files
     * voc_dir: the directory of the vocabulary file
@@ -105,7 +98,6 @@ It contains the following file:
 #### 9. decode.py: decode the model.
 =======
 #### decode.py: decode the model.
->>>>>>> 3665913c3153964f96e16c9f07210405a89110a2
 * Basic Parameters:
     * data_dir: the directory of test file
     * voc_dir: the directory of the vocabulary file
