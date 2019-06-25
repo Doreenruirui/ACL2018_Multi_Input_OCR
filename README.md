@@ -11,7 +11,7 @@ This repository includes the implementation of the method from [our paper](http:
   year={2018}
 }
 
-A trained model for the richmond dispatch newspaper data could be find [here](https://drive.google.com/open?id=1CB0uJd326jGrHtd6clO3h3Kx7TmLvioU). And the corresponding vocabulary could be find [here](https://drive.google.com/open?id=18x-eiH8LbU0PrnlZkORhTqBgsCYggNJz).
+A trained model for the richmond dispatch newspaper data could be find [here](https://drive.google.com/open?id=1CB0uJd326jGrHtd6clO3h3Kx7TmLvioU). And the corresponding vocabulary could be find [here](https://drive.google.com/open?id=18x-eiH8LbU0PrnlZkORhTqBgsCYggNJz). The model contains 3 layers and the hidden size is 512.
 
 
 It contains the following file:
